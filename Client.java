@@ -51,7 +51,7 @@ public class Client {
                 bos = new BufferedOutputStream(oos);
                 out = new ObjectOutputStream(bos);
                 int _whattodo; int count = 0;
-                out.writeObject(new Player(nickname,0)); //mydata를 쏘아보냄.
+                out.writeObject(new Player(nickname,0,-1)); //mydata를 쏘아보냄.
                 out.flush();
                 is = new DataInputStream(c_Socket.getInputStream());
                 bis = new BufferedInputStream(is);
@@ -129,7 +129,13 @@ public class Client {
                     } else { //내차례 아님..
                         myturn = 0;
                         System.out.print("not your Turn. Please give me fingerNum : ");
-                        fingerNum = scan.nextInt();
+                        while(true){
+                            fingerNum = scan.nextInt();
+                            if(0<= fingerNum && fingerNum <=2){
+                                break;
+                            }
+                            System.out.println("you only have 2 thumbs");
+                        }
                         tmp = new Player(nickname,fingerNum, -1, 5);
                     }
                     System.out.println("Wait1...");
@@ -148,6 +154,7 @@ public class Client {
                         }
                         else if(a.HP == 0){ //턴 인사람이 0으로 이김
                             System.out.println("all man shouted zero... " + a.NickName + " completely win!!!!!");
+                            damage = 10; //0으로 지면... 그냥 다 죽음!!
                         }
                         else{
                             System.out.println(a.NickName + " 's turn and he WIN, your damage is " + a.HP);
