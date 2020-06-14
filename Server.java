@@ -38,6 +38,16 @@ class Player implements Serializable { //직렬화 -> 소켓통신으로 보낼 
         this.playerList = "";
         this.whatToDo = _Whattodo;// 1이면 setname, 2면 게임 나감, 3이면 ready 4면 not ready, ... 5면 감정표현1 6이면 감정표현2 등등..
     }
+    Player(String name,int _Whattodo,int _Myfinger) {
+        this.NickName = name;
+        this.HP = 0;
+        this.ready = 0;
+        this.myFinger = _Myfinger;
+        this.mySuggestion = 0;
+        this.playerList = "";
+        this.whatToDo = _Whattodo;// 1이면 setname, 2면 게임 나감, 3이면 ready 4면 not ready, ... 5면 감정표현1 6이면 감정표현2 등등..
+    }
+    
     Player(String name,int _myFinger, int _mySuggestion , int _whattodo) {
         this.NickName = name;
         this.myFinger = _myFinger;
@@ -116,6 +126,7 @@ abstract class UserVariable{
             }catch (IOException e) { //중간에 나갔을때..
                 System.out.println("연결이 해제되었습니다.");
                 userNum -=1; //유저 인원수 관리.
+                UserVariable.gameStart = 0;
                 Socketmap.remove(a.NickName);
                 map.remove(a.NickName); // 나갔다..
                 return;
@@ -144,7 +155,7 @@ class AcceptThread extends  UserVariable implements Runnable{
                 out = new ObjectOutputStream(bos);
 
                     Thread tmp = new Thread(new Receive(in,out));tmp.start();
-                    //coneected socket을 새로 만들어진 thread와 연결짓는다.
+                    //connected socket을 새로 만들어진 thread와 연결짓는다.
                     //맵에 넣은 client에게 push받는 쓰레드 생성.
 
             } catch (IOException e) {
@@ -214,7 +225,6 @@ public class Server{
 
                     }
                     else if(tmp.whatToDo == 5){ // how is the result?\
-                        System.out.println("aaa");
                         UserOrder = new ArrayList<String>(UserVariable.map.keySet());
                         UserVariable.map.get(tmp.NickName).myFinger = tmp.myFinger; //받았으면 이걸로 내 핑거 설정해주고.
                         if(tmp.mySuggestion != -1 && alreadyAddSN == 0){
